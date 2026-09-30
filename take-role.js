@@ -1,6 +1,20 @@
 const { Client, GatewayIntentBits, ActionRowBuilder, StringSelectMenuBuilder, PermissionsBitField } = require('discord.js');
+const express = require('express'); // Memanggil Express
 
-// Mengambil token secara aman dari Environment Variables Railway
+// --- DUMMY WEB SERVER UNTUK RAILWAY ---
+const app = express();
+const port = process.env.PORT || 3000;
+
+app.get('/', (req, res) => {
+    res.send('Bot Discord Sedang Berjalan!');
+});
+
+app.listen(port, () => {
+    console.log(`✅ Dummy server berjalan di port ${port} supaya Railway tidak crash.`);
+});
+// --------------------------------------
+
+// Mengambil token secara aman
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 
 const client = new Client({ 
@@ -13,7 +27,6 @@ client.once('ready', () => {
 
 // Menangkap pesan untuk memunculkan menu dropdown
 client.on('messageCreate', async (message) => {
-    // Hanya Admin yang bisa memunculkan menu ini dengan mengetik !setuprole
     if (message.content === '!setuprole' && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
         
         // --- DROPDOWN 1: JABATAN ---
@@ -44,7 +57,6 @@ client.on('messageCreate', async (message) => {
                     { label: 'Team Xo & Senja', value: 'Team Xo & Senja' },
                     { label: 'Team Dodo & Axis', value: 'Team Dodo & Axis' },
                     { label: 'Team Rembo & Helen', value: 'Team Rembo & Helen' },
-                    // Tambahkan sisa tim kamu di sini dengan format yang sama
                 ]),
         );
 
@@ -53,12 +65,10 @@ client.on('messageCreate', async (message) => {
             components: [jabatanMenu, timMenu]
         });
         
-        // Hapus pesan trigger (!setuprole) biar rapi
         await message.delete();
     }
 });
 
-// Menangkap interaksi saat user memilih dropdown
 client.on('interactionCreate', async (interaction) => {
     if (!interaction.isStringSelectMenu()) return;
 
@@ -72,12 +82,10 @@ client.on('interactionCreate', async (interaction) => {
     const member = interaction.member;
 
     try {
-        // Jika user sudah punya role tersebut, maka bot akan menghapusnya (Toggle)
         if (member.roles.cache.has(role.id)) {
             await member.roles.remove(role);
             await interaction.reply({ content: `➖ Role **${role.name}** telah dihapus dari profilmu.`, ephemeral: true });
         } else {
-            // Jika belum punya, bot akan menambahkannya
             await member.roles.add(role);
             await interaction.reply({ content: `✅ Berhasil! Kamu sekarang memiliki role **${role.name}**.`, ephemeral: true });
         }

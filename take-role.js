@@ -1,6 +1,7 @@
 const { Client, GatewayIntentBits, ActionRowBuilder, StringSelectMenuBuilder, PermissionsBitField } = require('discord.js');
 
-const TOKEN = 'MTU1NDk3OTg5NTI0MTYwOTIxNg.GqRYa6.YGAz8sMxcitGc6VTkMuK6JqtBqmV30PjQgrZoE';
+// Mengambil token secara aman dari Environment Variables Railway
+const TOKEN = process.env.TOKEN;
 
 const client = new Client({ 
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] 
@@ -82,7 +83,7 @@ client.on('interactionCreate', async (interaction) => {
         }
     } catch (error) {
         console.error(error);
-        await interaction.reply({ content: '❌ Terjadi kesalahan. Pastikan posisi role Bot berada paling atas di Server Settings!', ephemeral: true });
+        await interaction.reply({ content: `❌ Terjadi kesalahan. Pastikan posisi role Bot berada paling atas di Server Settings!`, ephemeral: true });
     }
 });
 
